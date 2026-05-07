@@ -26,6 +26,8 @@ export const App: React.FC = () => {
     addTodo,
     removeTodo,
     clearCompleted,
+    toggleAll,
+    isAllCompleted,
     setTodos,
   } = useTodos(setError);
 
@@ -52,6 +54,8 @@ export const App: React.FC = () => {
           onAdd={addTodo}
           onError={setError}
           loading={!!tempTodo || deletingId.length > 0}
+          isAllCompleted={isAllCompleted}
+          onToggleAll={toggleAll}
         />
 
         {(!!todos.length || tempTodo) && (

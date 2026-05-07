@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { ErrorMessage } from '../types/types';
 
 type Props = {
   onAdd: (title: string) => Promise<void>;
   onError: (message: string) => void;
   loading: boolean;
+  isAllCompleted: boolean;
+  onToggleAll: () => void;
 };
 
-export const Header: React.FC<Props> = ({ onAdd, onError, loading }) => {
+export const Header: React.FC<Props> = ({
+  onAdd,
+  onError,
+  loading,
+  isAllCompleted,
+  onToggleAll,
+}) => {
   const [title, setTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -22,7 +31,7 @@ export const Header: React.FC<Props> = ({ onAdd, onError, loading }) => {
     const trimmedTitle = title.trim();
 
     if (!trimmedTitle) {
-      onError('Title should not be empty');
+      onError(ErrorMessage.EmptyTitle);
 
       return;
     }
@@ -36,12 +45,19 @@ export const Header: React.FC<Props> = ({ onAdd, onError, loading }) => {
     } catch {
     } finally {
       setDisabled(false);
-      setTimeout(() => inputRef.current?.focus(), 0);
+      inputRef.current?.focus();
     }
   };
 
   return (
     <header className="todoapp__header">
+      <button
+        type="button"
+        className={`todoapp__toggle-all ${isAllCompleted ? 'active' : ''}`}
+        data-cy="ToggleAllButton"
+        onClick={onToggleAll}
+      />
+
       <form onSubmit={handleSubmit}>
         <input
           ref={inputRef}
