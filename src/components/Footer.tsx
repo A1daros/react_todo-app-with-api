@@ -2,6 +2,7 @@ import React from 'react';
 import { Todo } from '../types/Todo';
 import cn from 'classnames';
 import { FilterStatus } from '../types/types';
+import { FILTERS } from '../constants';
 
 type Props = {
   todos: Todo[];
@@ -16,33 +17,11 @@ export const Footer: React.FC<Props> = ({
   onFilterChange,
   onClearCompleted,
 }) => {
-  const FILTERS = [
-    {
-      id: 'all' as FilterStatus,
-      title: 'All',
-      url: '#/',
-      cy: 'FilterLinkAll',
-    },
-    {
-      id: 'active' as FilterStatus,
-      title: 'Active',
-      url: '#/active',
-      cy: 'FilterLinkActive',
-    },
-    {
-      id: 'completed' as FilterStatus,
-      title: 'Completed',
-      url: '#/completed',
-      cy: 'FilterLinkCompleted',
-    },
-  ];
-
   if (todos.length === 0) {
     return null;
   }
 
   const activeTodos = todos.filter(todo => !todo.completed).length;
-  const completedTodos = todos.length - activeTodos;
 
   const handleFilterClick =
     (status: FilterStatus) => (event: React.MouseEvent) => {
@@ -74,7 +53,7 @@ export const Footer: React.FC<Props> = ({
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
-        disabled={completedTodos === 0}
+        disabled={todos.length - activeTodos === 0}
         onClick={onClearCompleted}
       >
         Clear completed

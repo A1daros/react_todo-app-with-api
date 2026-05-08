@@ -7,6 +7,7 @@ type Props = {
   loading: boolean;
   isAllCompleted: boolean;
   onToggleAll: () => void;
+  hasTodos: boolean;
 };
 
 export const Header: React.FC<Props> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<Props> = ({
   loading,
   isAllCompleted,
   onToggleAll,
+  hasTodos,
 }) => {
   const [title, setTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
@@ -52,12 +54,14 @@ export const Header: React.FC<Props> = ({
 
   return (
     <header className="todoapp__header">
-      <button
-        type="button"
-        className={`todoapp__toggle-all ${isAllCompleted ? 'active' : ''}`}
-        data-cy="ToggleAllButton"
-        onClick={onToggleAll}
-      />
+      {hasTodos && (
+        <button
+          type="button"
+          className={`todoapp__toggle-all ${isAllCompleted ? 'active' : ''}`}
+          data-cy="ToggleAllButton"
+          onClick={onToggleAll}
+        />
+      )}
 
       <form onSubmit={handleSubmit}>
         <input

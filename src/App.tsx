@@ -50,6 +50,7 @@ export const App: React.FC = () => {
           loading={!!tempTodo || deletingId.length > 0}
           isAllCompleted={isAllCompleted}
           onToggleAll={toggleAll}
+          hasTodos={todos.length > 0}
         />
 
         {(!!todos.length || tempTodo) && (

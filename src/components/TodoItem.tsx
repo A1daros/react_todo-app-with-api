@@ -110,17 +110,6 @@ export const TodoItem: React.FC<Props> = ({
         </>
       )}
 
-      {/* {!isLoading && (
-        <button
-          type="button"
-          className="todo__remove"
-          data-cy="TodoDelete"
-          onClick={() => onDelete?.(todo.id)}
-        >
-          ×
-        </button>
-      )} */}
-
       <div
         data-cy="TodoLoader"
         className={cn('modal', 'overlay', {
