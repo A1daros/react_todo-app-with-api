@@ -18,6 +18,7 @@ export const Header: React.FC<Props> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
+
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {

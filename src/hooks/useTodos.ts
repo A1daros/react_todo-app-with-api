@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
-import { createTodo, deleteTodo, updateTodo, USER_ID } from '../api/todos';
-import { client } from '../utils/fetchClient';
 import { ErrorMessage } from '../types/types';
+import {
+  createTodo,
+  deleteTodo,
+  getTodos,
+  updateTodo,
+  USER_ID,
+} from '../api/todos';
 
 export const useTodos = (onError: (message: string) => void) => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -11,8 +16,7 @@ export const useTodos = (onError: (message: string) => void) => {
   const [loadingId, setLoadingId] = useState<number[]>([]);
 
   useEffect(() => {
-    client
-      .get<Todo[]>(`/todos?userId=${USER_ID}`)
+    getTodos()
       .then(setTodos)
       .catch(() => onError(ErrorMessage.LoadTodo));
   }, [onError]);
@@ -56,6 +60,22 @@ export const useTodos = (onError: (message: string) => void) => {
     }
   };
 
+  const renameTodo = async (todoId: number, title: string) => {
+    setLoadingId(prev => [...prev, todoId]);
+
+    try {
+      await updateTodo(todoId, { title });
+      setTodos(prev =>
+        prev.map(todo => (todo.id === todoId ? { ...todo, title } : todo)),
+      );
+    } catch {
+      onError(ErrorMessage.UpdateTodo);
+      throw new Error();
+    } finally {
+      setLoadingId(prev => prev.filter(id => id !== todoId));
+    }
+  };
+
   const clearCompleted = async () => {
     const completedTodos = todos.filter(todo => todo.completed);
 
@@ -94,6 +114,31 @@ export const useTodos = (onError: (message: string) => void) => {
     }
   };
 
+  const toggleTodo = async (todoId: number) => {
+    const todo = todos.find(TODO => TODO.id === todoId);
+
+    if (!todo) {
+      return;
+    }
+
+    const newCompleted = !todo.completed;
+
+    setLoadingId(prev => [...prev, todo.id]);
+
+    try {
+      await updateTodo(todo.id, { completed: newCompleted });
+      setTodos(prev =>
+        prev.map(t =>
+          t.id === todo.id ? { ...t, completed: newCompleted } : t,
+        ),
+      );
+    } catch {
+      onError(ErrorMessage.UpdateTodo);
+    } finally {
+      setLoadingId(prev => prev.filter(id => id !== todo.id));
+    }
+  };
+
   return {
     todos,
     tempTodo,
@@ -104,6 +149,8 @@ export const useTodos = (onError: (message: string) => void) => {
     removeTodo,
     clearCompleted,
     toggleAll,
+    toggleTodo,
+    renameTodo,
     setTodos,
   };
 };
